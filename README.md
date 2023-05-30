@@ -6,8 +6,8 @@ A deep learning (U-Net) model was trained to automatically identify the backbone
 
 # Video tutorials
 [Download Fiji/ImageJ and install required plugins to run MuViSS](https://youtu.be/dwRcHlkcHlI)<br />
-%[Run MuViSS](https://youtu.be/8r9kXktrU18)<br />
-[Run MuViSS with manual segmentation](https://youtu.be/JGPAz1Lrh3k)<br />
+//[Run MuViSS](https://youtu.be/8r9kXktrU18)<br />
+#[Run MuViSS with manual segmentation](https://youtu.be/JGPAz1Lrh3k)<br />
 
 # Citation
 Please cite our paper if you use this plugin: <br>
