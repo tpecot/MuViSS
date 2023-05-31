@@ -8,9 +8,9 @@ A deep learning (U-Net) model was trained to automatically identify the backbone
 The first macro allows to extract the ratio of segmented areas within a predefined intensity range corresponding to the different tissues (muscle, visceral and subcutaneous fat) segmented with the U-Net model. If the segmentation fails, the second macro allows the user to give a manual segmentation as an input.<br>
 
 # Video tutorials
-[Download Fiji/ImageJ and install required plugins to run MuViSS]()<br>
-[Run MuViSS]()<br>
-[Run MuViSS with manual segmentation]()<br>
+[Downloading and setting up Fiji to process MuViSS](https://youtu.be/2d3eNNArCkk) <br>
+[Use MuViSS for segmenting and processing L3-CT scans](https://youtu.be/bHEgR0Pd8Qk) <br>
+[Use MuViSS for processing L3-CT scans with known segmentations](https://youtu.be/-IYwdjgth7w) <br>
 
 # Citations
 If you use MuViSS, please cite: <br> 
