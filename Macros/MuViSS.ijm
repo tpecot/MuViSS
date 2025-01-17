@@ -74,8 +74,13 @@ function processFile(input, output, file) {
 		run("Convert to Mask");
 		// connected components
 		run("Connected Components Labeling", "connectivity=4 type=[16 bits]");
-		// keep largets component
-		run("Keep Largest Label");
+		// test if at least one component
+		getStatistics(class1_area, class1_mean, class1_min, class1_max, class1_std, class1_histogram);
+		// if there is at least one component
+		if ( class1_max>0 ) {
+			// keep largest component
+			run("Keep Largest Label");
+		}
 		// binarize image
 		setThreshold(1, 65535, "raw");
 		setOption("BlackBackground", false);
@@ -92,8 +97,13 @@ function processFile(input, output, file) {
 		run("Convert to Mask");
 		// connected components
 		run("Connected Components Labeling", "connectivity=4 type=[16 bits]");
-		// keep largets component
-		run("Keep Largest Label");
+		// test if at least one component
+		getStatistics(class2_area, class2_mean, class2_min, class2_max, class2_std, class2_histogram);
+		// if there is at least one component
+		if ( class2_max>0 ) {
+			// keep largest component
+			run("Keep Largest Label");
+		}
 		// binarize image
 		setThreshold(1, 65535, "raw");
 		setOption("BlackBackground", false);
@@ -142,8 +152,13 @@ function processFile(input, output, file) {
 		run("Convert to Mask");
 		// process connected components
 		run("Connected Components Labeling", "connectivity=4 type=[16 bits]");
-		// keep largets component
-		run("Keep Largest Label");
+		// test if at least one component
+		getStatistics(class4_area, class4_mean, class4_min, class4_max, class4_std, class4_histogram);
+		// if there is at least one component
+		if ( class4_max>0 ) {
+			// keep largest component
+			run("Keep Largest Label");
+		}
 		rename("prepreprocessed_input-0003");
 		// duplicate
 		run("Duplicate...", " ");
@@ -257,34 +272,71 @@ function processFile(input, output, file) {
 		run("8-bit");
 		setThreshold(127, 255);
 		run("Create Selection");
-		roiManager("Add");
+		muscleROI_index = -1;
+		if (selectionType()>(-1)){
+			roiManager("Add");
+			muscleROI_index = 0;
+		}
 		// analyze visceral fat
 		imageCalculator("Multiply create 32-bit", "VisceralFat","VisceralFatPixels");
 		// create ROI
 		run("8-bit");
 		setThreshold(127, 255);
 		run("Create Selection");
-		roiManager("Add");
+		visceralFatROI_index = -1;
+		if (selectionType()>(-1)){
+			roiManager("Add");
+			visceralFatROI_index = muscleROI_index + 1;
+		}
 		// analyze subcutaneous fat
 		imageCalculator("Multiply create 32-bit", "SubcutaneousFat","SubcutaneousFatPixels");
 		// create ROI
 		run("8-bit");
 		setThreshold(127, 255);
 		run("Create Selection");
-		roiManager("Add");
-
+		subcutaneousFatROI_index = -1;
+		if (selectionType()>(-1)){
+			roiManager("Add");
+			if ( (muscleROI_index < 0) && (visceralFatROI_index < 0) ) {
+				subcutaneousFatROI_index = 0;
+			}
+			else {
+				if ( (muscleROI_index > (-1)) && (visceralFatROI_index > (-1)) ) {
+					subcutaneousFatROI_index = 2;
+				}
+				else{
+					subcutaneousFatROI_index = 1;
+				}
+			}
+		}
+		
 		// select input image
 		selectImage("input");
 		setResult("Input name", nResults, file);
 		// measure area for all ROIs
-		roiManager("select", 0);
-		getStatistics(muscle_area, mean, min, max, std, histogram);
+		if (muscleROI_index > (-1)){
+			roiManager("select", muscleROI_index);
+			getStatistics(muscle_area, mean, min, max, std, histogram);
+		}
+		else{
+			muscle_area = 0;
+		}
     	setResult("Muscle area", nResults-1, muscle_area);
-		roiManager("select", 1);
-		getStatistics(visceral_fat_area, mean, min, max, std, histogram);
+		if (visceralFatROI_index > (-1)){
+			roiManager("select", visceralFatROI_index);
+			getStatistics(visceral_fat_area, mean, min, max, std, histogram);
+		}
+		else{
+			visceral_fat_area = 0;
+		}
 	    setResult("Visceral fat area", nResults-1, visceral_fat_area);
-		roiManager("select", 2);
-		getStatistics(subcutaneous_fat_area, mean, min, max, std, histogram);
+	    if (subcutaneousFatROI_index > (-1)){
+			roiManager("select", subcutaneousFatROI_index);
+			getStatistics(subcutaneous_fat_area, mean, min, max, std, histogram);
+	    }
+	    else{
+	    	subcutaneous_fat_area = 0;
+	    }
     	setResult("Subcutaneous fat area", nResults-1, subcutaneous_fat_area);
 	
 		// clear ROI manager
@@ -297,21 +349,27 @@ function processFile(input, output, file) {
 		run("8-bit");
 		setThreshold(127, 255);
 		run("Create Selection");
-		roiManager("Add");
-		// muscle
+		if (selectionType()>(-1)){
+			roiManager("Add");
+		}
+		// visceral fat
 		selectImage("VisceralFat");
 		// add to ROI manager
 		run("8-bit");
 		setThreshold(127, 255);
 		run("Create Selection");
-		roiManager("Add");
-		// muscle
+		if (selectionType()>(-1)){
+			roiManager("Add");
+		}
+		// subcutaneous fat
 		selectImage("SubcutaneousFat");
 		// add to ROI manager
 		run("8-bit");
 		setThreshold(127, 255);
 		run("Create Selection");
-		roiManager("Add");
+		if (selectionType()>(-1)){
+			roiManager("Add");
+		}
 		// select input image
 		selectImage("input");
 		// overlay rois to the image
