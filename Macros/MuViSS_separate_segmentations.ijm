@@ -31,6 +31,8 @@ function processFolder(input_images) {
 			processFile(input_images, input_segmentations, output, list[i]);
 		if(endsWith(list[i], "DCM"))
 			processFile(input_images, input_segmentations, output, list[i]);
+		if(endsWith(list[i], "dcm"))
+			processFile(input, output, list[i]);
 	}
 
 	// save results
